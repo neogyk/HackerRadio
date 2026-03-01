@@ -1,7 +1,7 @@
 ---
 title:"hacker_radio"
-sdk: static
-python_version: 3.10
+sdk:static
+python_version:3.10
 suggested_hardware:"cpu-basic"
 app_file:index.html
 app_build_command:npm run build
