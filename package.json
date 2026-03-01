@@ -5,7 +5,7 @@
   "private": true,
   "scripts": {
     "dev": "node node_modules/rari/dist/cli.mjs dev",
-    "build": "node node_modules/rari/dist/cli.mjs build",
+    "build": "vite build",
     "start": "node node_modules/rari/dist/cli.mjs start"
   },
   "dependencies": {

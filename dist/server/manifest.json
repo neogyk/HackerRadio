@@ -46,26 +46,6 @@
       "moduleSpecifier": "file:///Users/leonid/Desktop/LinkedinRadio/dist/server/app/page.js",
       "dependencies": [],
       "hasNodeImports": false
-    },
-    "lib/ai-summarize": {
-      "id": "lib/ai-summarize",
-      "filePath": "/Users/leonid/Desktop/LinkedinRadio/src/lib/ai-summarize.ts",
-      "relativePath": "src/lib/ai-summarize.ts",
-      "bundlePath": "server/lib/ai-summarize.js",
-      "moduleSpecifier": "file:///Users/leonid/Desktop/LinkedinRadio/dist/server/lib/ai-summarize.js",
-      "dependencies": [],
-      "hasNodeImports": false
-    },
-    "lib/voxtral-local": {
-      "id": "lib/voxtral-local",
-      "filePath": "/Users/leonid/Desktop/LinkedinRadio/src/lib/voxtral-local.ts",
-      "relativePath": "src/lib/voxtral-local.ts",
-      "bundlePath": "server/lib/voxtral-local.js",
-      "moduleSpecifier": "file:///Users/leonid/Desktop/LinkedinRadio/dist/server/lib/voxtral-local.js",
-      "dependencies": [
-        "@huggingface/transformers"
-      ],
-      "hasNodeImports": false
     }
   },
   "importMap": {
@@ -82,5 +62,5 @@
     }
   },
   "version": "1.0.0",
-  "buildTime": "2026-03-01T18:55:24.976Z"
+  "buildTime": "2026-03-01T21:03:33.138Z"
 }
