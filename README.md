@@ -6,7 +6,7 @@ suggested_hardware: "cpu-basic"
 app_build_command: npm run dev
 app_file: ./dist/index.html
 models: ['onnx-community/Voxtral-Mini-3B-2507-ONNX']
-base_path: ./
+base_path: ./dist/
 app_port: 5174
 header: "mini"
 ---
