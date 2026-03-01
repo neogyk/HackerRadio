@@ -1,8 +1,8 @@
 ---
 title: hacker_radio
 emoji: 📻
-colorFrom: orange
-colorTo: purple
+colorFrom: red
+colorTo: indigo 
 sdk: docker
 pinned: false
 models:
