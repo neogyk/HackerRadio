@@ -1,8 +1,6 @@
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-import { VoxtralProcessor, env } from '@huggingface/transformers'
-
-// Always fetch from HuggingFace Hub, never look for local files
-env.allowLocalModels = false
+// @huggingface/transformers is loaded from CDN at runtime (not bundled)
+// to avoid OOMing the Docker build with its 139 MB package size.
+const HF_CDN = 'https://esm.sh/@huggingface/transformers@3.8.1'
 
 const MODEL_ID = 'onnx-community/Voxtral-Mini-3B-2507-ONNX'
 
@@ -14,12 +12,23 @@ export interface LoadProgress {
   message: string
 }
 
-// Use `any` for the model to avoid fighting internal-only type requirements
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+let _lib: any = null
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 let _processor: any = null
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 let _model: any = null
 let _loadPromise: Promise<void> | null = null
+
+/** Lazy-load the CDN module once */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+async function getLib(): Promise<any> {
+  if (_lib) return _lib
+  // @vite-ignore tells rolldown/vite not to try to bundle this URL
+  _lib = await import(/* @vite-ignore */ HF_CDN)
+  _lib.env.allowLocalModels = false
+  return _lib
+}
 
 /** Resample a WebM/any audio blob to a 16 kHz mono Float32Array */
 async function decodeAudioTo16kHz(blob: Blob): Promise<Float32Array> {
@@ -59,13 +68,13 @@ export function loadVoxtralLocal(onProgress?: (info: LoadProgress) => void): Pro
     const report = (progress: number, message: string) =>
       onProgress?.({ status: 'loading', progress, message })
 
-    report(0, 'Loading processor…')
+    report(0, 'Loading transformers.js from CDN…')
+    const { VoxtralProcessor, VoxtralForConditionalGeneration } = await getLib()
+
+    report(2, 'Loading processor…')
     _processor = await VoxtralProcessor.from_pretrained(MODEL_ID)
 
     report(5, 'Downloading model weights (this may take several minutes on first run)…')
-
-    // Dynamically import to avoid top-level type issues with the model class
-    const { VoxtralForConditionalGeneration } = await import('@huggingface/transformers')
 
     let lastPct = 5
     _model = await VoxtralForConditionalGeneration.from_pretrained(MODEL_ID, {
@@ -113,7 +122,6 @@ export async function transcribeWithVoxtralLocal(audioBlob: Blob): Promise<strin
 
   const audio = await decodeAudioTo16kHz(audioBlob)
 
-  // Multimodal conversation format (runtime supports array content despite TS types)
   const conversation = [
     {
       role: 'user',
@@ -124,8 +132,7 @@ export async function transcribeWithVoxtralLocal(audioBlob: Blob): Promise<strin
     },
   ]
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const text = _processor.apply_chat_template(conversation as any, { tokenize: false })
+  const text = _processor.apply_chat_template(conversation, { tokenize: false })
   const inputs = await _processor(text, audio)
 
   const generated_ids = await _model.generate({
@@ -133,10 +140,8 @@ export async function transcribeWithVoxtralLocal(audioBlob: Blob): Promise<strin
     max_new_tokens: 256,
   })
 
-  // Strip prompt tokens — keep only newly generated tokens
   const promptLen = inputs.input_ids?.dims?.at(-1) ?? 0
-  const new_tokens = (generated_ids as { slice: (...args: unknown[]) => unknown })
-    .slice(null, [promptLen, null])
+  const new_tokens = generated_ids.slice(null, [promptLen, null])
   const [transcription] = _processor.batch_decode(new_tokens, { skip_special_tokens: true })
   return transcription.trim()
 }
