@@ -1,0 +1,28 @@
+{
+  "name": "linkedin-radio",
+  "type": "module",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "node node_modules/rari/dist/cli.mjs dev",
+    "build": "node node_modules/rari/dist/cli.mjs build",
+    "start": "node node_modules/rari/dist/cli.mjs start"
+  },
+  "dependencies": {
+    "@huggingface/transformers": "^3.8.1",
+    "piper-tts-web": "^1.1.2",
+    "rari": "^0.9.1",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0",
+    "vite": "^7.3.1"
+  },
+  "devDependencies": {
+    "@tailwindcss/vite": "^4.1.0",
+    "@types/react": "^19.1.0",
+    "@types/react-dom": "^19.1.0",
+    "rolldown-vite": "^6.0.0",
+    "tailwindcss": "^4.1.0",
+    "typescript": "^5.8.0",
+    "vite-plugin-static-copy": "^3.2.0"
+  }
+}

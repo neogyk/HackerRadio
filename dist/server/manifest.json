@@ -1,0 +1,86 @@
+{
+  "components": {
+    "lib/mistral-summarize": {
+      "id": "lib/mistral-summarize",
+      "filePath": "/Users/leonid/Desktop/LinkedinRadio/src/lib/mistral-summarize.ts",
+      "relativePath": "src/lib/mistral-summarize.ts",
+      "bundlePath": "server/lib/mistral-summarize.js",
+      "moduleSpecifier": "file:///Users/leonid/Desktop/LinkedinRadio/dist/server/lib/mistral-summarize.js",
+      "dependencies": [],
+      "hasNodeImports": false
+    },
+    "app/feed/loading": {
+      "id": "app/feed/loading",
+      "filePath": "/Users/leonid/Desktop/LinkedinRadio/src/app/feed/loading.tsx",
+      "relativePath": "src/app/feed/loading.tsx",
+      "bundlePath": "server/app/feed/loading.js",
+      "moduleSpecifier": "file:///Users/leonid/Desktop/LinkedinRadio/dist/server/app/feed/loading.js",
+      "dependencies": [],
+      "hasNodeImports": false
+    },
+    "app/feed/page": {
+      "id": "app/feed/page",
+      "filePath": "/Users/leonid/Desktop/LinkedinRadio/src/app/feed/page.tsx",
+      "relativePath": "src/app/feed/page.tsx",
+      "bundlePath": "server/app/feed/page.js",
+      "moduleSpecifier": "file:///Users/leonid/Desktop/LinkedinRadio/dist/server/app/feed/page.js",
+      "dependencies": [
+        "@/components/HNPostFeed"
+      ],
+      "hasNodeImports": false
+    },
+    "app/layout": {
+      "id": "app/layout",
+      "filePath": "/Users/leonid/Desktop/LinkedinRadio/src/app/layout.tsx",
+      "relativePath": "src/app/layout.tsx",
+      "bundlePath": "server/app/layout.js",
+      "moduleSpecifier": "file:///Users/leonid/Desktop/LinkedinRadio/dist/server/app/layout.js",
+      "dependencies": [],
+      "hasNodeImports": false
+    },
+    "app/page": {
+      "id": "app/page",
+      "filePath": "/Users/leonid/Desktop/LinkedinRadio/src/app/page.tsx",
+      "relativePath": "src/app/page.tsx",
+      "bundlePath": "server/app/page.js",
+      "moduleSpecifier": "file:///Users/leonid/Desktop/LinkedinRadio/dist/server/app/page.js",
+      "dependencies": [],
+      "hasNodeImports": false
+    },
+    "lib/ai-summarize": {
+      "id": "lib/ai-summarize",
+      "filePath": "/Users/leonid/Desktop/LinkedinRadio/src/lib/ai-summarize.ts",
+      "relativePath": "src/lib/ai-summarize.ts",
+      "bundlePath": "server/lib/ai-summarize.js",
+      "moduleSpecifier": "file:///Users/leonid/Desktop/LinkedinRadio/dist/server/lib/ai-summarize.js",
+      "dependencies": [],
+      "hasNodeImports": false
+    },
+    "lib/voxtral-local": {
+      "id": "lib/voxtral-local",
+      "filePath": "/Users/leonid/Desktop/LinkedinRadio/src/lib/voxtral-local.ts",
+      "relativePath": "src/lib/voxtral-local.ts",
+      "bundlePath": "server/lib/voxtral-local.js",
+      "moduleSpecifier": "file:///Users/leonid/Desktop/LinkedinRadio/dist/server/lib/voxtral-local.js",
+      "dependencies": [
+        "@huggingface/transformers"
+      ],
+      "hasNodeImports": false
+    }
+  },
+  "importMap": {
+    "imports": {
+      "react": "npm:react@19",
+      "react-dom": "npm:react-dom@19",
+      "react/jsx-runtime": "npm:react@19/jsx-runtime",
+      "react/jsx-dev-runtime": "npm:react@19/jsx-dev-runtime",
+      "@/": "file:///Users/leonid/Desktop/LinkedinRadio/src/",
+      "react/jsx-runtime/": "file:///Users/leonid/Desktop/LinkedinRadio/node_modules/react/jsx-runtime.js/",
+      "react/jsx-dev-runtime/": "file:///Users/leonid/Desktop/LinkedinRadio/node_modules/react/jsx-dev-runtime.js/",
+      "react/": "file:///Users/leonid/Desktop/LinkedinRadio/node_modules/react/index.js/",
+      "react-dom/client/": "file:///Users/leonid/Desktop/LinkedinRadio/node_modules/react-dom/client.js/"
+    }
+  },
+  "version": "1.0.0",
+  "buildTime": "2026-03-01T18:55:24.976Z"
+}

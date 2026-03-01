@@ -1,0 +1,41 @@
+{
+  "routes": [
+    {
+      "path": "/",
+      "filePath": "page.tsx",
+      "segments": [],
+      "params": [],
+      "isDynamic": false
+    },
+    {
+      "path": "/feed",
+      "filePath": "feed/page.tsx",
+      "segments": [
+        {
+          "type": "static",
+          "value": "feed"
+        }
+      ],
+      "params": [],
+      "isDynamic": false
+    }
+  ],
+  "layouts": [
+    {
+      "path": "/",
+      "filePath": "layout.tsx"
+    }
+  ],
+  "loading": [
+    {
+      "path": "/feed",
+      "filePath": "feed/loading.tsx",
+      "componentId": "loading:/feed"
+    }
+  ],
+  "errors": [],
+  "notFound": [],
+  "apiRoutes": [],
+  "ogImages": [],
+  "generated": "2026-03-01T16:44:40.078Z"
+}
