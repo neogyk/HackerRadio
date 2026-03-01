@@ -21,4 +21,15 @@ export default defineConfig({
       '@': path.resolve(__dirname, 'src'),
     },
   },
+  build: {
+    rollupOptions: {
+      external: ['@huggingface/transformers'],
+      output: {
+        // Load the package from CDN at runtime instead of bundling it
+        paths: {
+          '@huggingface/transformers': 'https://esm.sh/@huggingface/transformers@3.8.1',
+        },
+      },
+    },
+  },
 })
