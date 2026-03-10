@@ -1,4 +1,4 @@
-export type AiVendor = 'mistral' | 'openai' | 'gemini'
+export type AiVendor = 'mistral' | 'openai' | 'gemini' | 'onnx'
 
 // Gemini rate limiter: max 3 requests per 2 minutes, 5s sleep between calls
 const geminiRateLimiter = {
@@ -20,6 +20,8 @@ const geminiRateLimiter = {
   },
 }
 
+import { summarizeWithOnnx } from './onnx-summarize'
+
 const SYSTEM_PROMPT =
   'You summarize articles for audio playback. Write 2–4 natural spoken sentences. No bullet points, no markdown, no special characters. Clean up any HTML artifacts or boilerplate.'
 
@@ -36,6 +38,8 @@ export async function summarizeForAudio(
       return summarizeOpenAICompat(title, body, apiKey, 'https://api.openai.com/v1/chat/completions', 'gpt-4o-mini')
     case 'gemini':
       return summarizeGemini(title, body, apiKey)
+    case 'onnx':
+      return summarizeWithOnnx(title, body)
   }
 }
 

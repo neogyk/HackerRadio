@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useCallback, useEffect, useRef } from 'react'
-import { fetchStories, type HNStory, type FeedType } from '@/lib/hn-api'
+import { type HNStory, type FeedType } from '@/lib/hn-api'
 import { speak as piperSpeak, stopSpeaking, warmUpEngine } from '@/lib/piper-tts'
 import { fetchPageText, stripHtml } from '@/lib/page-content'
 import { summarizeForAudio, type AiVendor } from '@/lib/ai-summarize'
@@ -74,19 +74,48 @@ export function HNPostFeed() {
     }
   }, [isPlaying])
 
-  // Fetch stories from HN API
+  // Stream stories from the server-side HN handler.
+  // Page content from story URLs is never fetched here — only after the user
+  // plays a specific post (see playPost below).
   useEffect(() => {
     setLoading(true)
+    setStories([])
     stopSpeaking()
     setIsPlaying(false)
     setCurrentPostIndex(-1)
 
-    fetchStories(feedType, 30)
-      .then(data => {
-        setStories(data)
-        setLoading(false)
-      })
-      .catch(() => setLoading(false))
+    // Map from story id → story, plus the rank-ordered id list received from the server
+    const storyMap = new Map<number, HNStory>()
+    let orderedIds: number[] = []
+
+    const es = new EventSource(`/api/hn-stream?type=${feedType}&count=30`)
+
+    es.onmessage = ({ data }) => {
+      type StreamMsg =
+        | { type: 'ids'; ids: number[] }
+        | { type: 'story'; story: HNStory }
+        | { type: 'done' }
+
+      const msg = JSON.parse(data) as StreamMsg
+
+      if (msg.type === 'ids') {
+        orderedIds = msg.ids
+        setLoading(false) // IDs received — start showing cards as they stream in
+      } else if (msg.type === 'story') {
+        storyMap.set(msg.story.id, msg.story)
+        // Rebuild list in original rank order, showing only resolved stories
+        setStories(orderedIds.filter(id => storyMap.has(id)).map(id => storyMap.get(id)!))
+      } else if (msg.type === 'done') {
+        es.close()
+      }
+    }
+
+    es.onerror = () => {
+      es.close()
+      setLoading(false)
+    }
+
+    return () => es.close()
   }, [feedType])
 
   const speak = useCallback((text: string, onEnd?: () => void) => {
@@ -111,13 +140,16 @@ export function HNPostFeed() {
     const story = list[index]
     const intro = `${story.title}. Posted by ${story.by} with ${story.score} points and ${story.descendants} comments.`
 
-    // Kick off body fetch + summarize in the background immediately
+    // Kick off body fetch + summarize in the background immediately.
+    // Page content is only fetched here — after the user has selected this post to play.
     const bodyPromise: Promise<string> = (async () => {
       const vendor = aiVendorRef.current
-      const apiKey = vendor === 'mistral' ? voxtralApiKeyRef.current
+      // ONNX runs locally — no API key required
+      const apiKey = vendor === 'onnx'    ? ''
+                   : vendor === 'mistral' ? voxtralApiKeyRef.current
                    : vendor === 'openai'  ? openaiApiKeyRef.current
                    :                        geminiApiKeyRef.current
-      if (!apiKey) return ''
+      if (vendor !== 'onnx' && !apiKey) return ''
 
       setIsSummarizing(true)
       try {
@@ -233,7 +265,7 @@ export function HNPostFeed() {
     { value: 'best', label: 'Best' },
   ]
 
-  const vendorLabel = aiVendor === 'mistral' ? 'Mistral' : aiVendor === 'openai' ? 'OpenAI' : 'Gemini'
+  const vendorLabel = aiVendor === 'mistral' ? 'Mistral' : aiVendor === 'openai' ? 'OpenAI' : aiVendor === 'onnx' ? 'ONNX (local)' : 'Gemini'
 
   return (
     <div className="flex flex-col gap-4 h-[calc(100vh-5rem)]">

@@ -35,10 +35,11 @@ function formatTime(totalSeconds: number): string {
 
 const BAR_COUNT = 40
 
-const VENDORS: { id: AiVendor; label: string; placeholder: string }[] = [
+const VENDORS: { id: AiVendor; label: string; placeholder: string; local?: boolean }[] = [
   { id: 'mistral', label: 'Mistral', placeholder: 'Mistral API key…' },
   { id: 'openai',  label: 'OpenAI',  placeholder: 'sk-…' },
   { id: 'gemini',  label: 'Gemini',  placeholder: 'AIza…' },
+  { id: 'onnx',    label: 'ONNX (local)', placeholder: '', local: true },
 ]
 
 export function AudioPlayer({
@@ -88,16 +89,17 @@ export function AudioPlayer({
     return () => cancelAnimationFrame(animFrameRef.current)
   }, [isPlaying])
 
-  const currentKey = aiVendor === 'mistral' ? voxtralApiKey : aiVendor === 'openai' ? openaiApiKey : geminiApiKey
-  const hasKey = !!currentKey
+  const isLocal = aiVendor === 'onnx'
+  const currentKey = isLocal ? '' : aiVendor === 'mistral' ? voxtralApiKey : aiVendor === 'openai' ? openaiApiKey : geminiApiKey
+  const hasKey = isLocal || !!currentKey
 
   function handleKeyChange(val: string) {
     if (aiVendor === 'mistral') onVoxtralApiKeyChange(val)
     else if (aiVendor === 'openai') onOpenaiApiKeyChange(val)
-    else onGeminiApiKeyChange(val)
+    else if (aiVendor === 'gemini') onGeminiApiKeyChange(val)
   }
 
-  const anyKeySet = !!(voxtralApiKey || openaiApiKey || geminiApiKey)
+  const anyKeySet = !!(voxtralApiKey || openaiApiKey || geminiApiKey) || aiVendor === 'onnx'
 
   return (
     <div className="rounded-2xl border border-orange-400/40 bg-white shadow-lg p-4">
@@ -247,28 +249,39 @@ export function AudioPlayer({
             ))}
           </div>
 
-          {/* API key input for selected vendor */}
-          <div className="flex items-center gap-2">
-            <input
-              type="password"
-              value={currentKey}
-              onChange={e => handleKeyChange(e.target.value)}
-              placeholder={VENDORS.find(v => v.id === aiVendor)?.placeholder}
-              className="flex-1 bg-gray-50 border border-purple-300/60 rounded-lg px-3 py-1.5 text-xs text-gray-700 placeholder-gray-400 focus:outline-none focus:border-purple-400"
-            />
-            {hasKey && (
-              <span className="text-xs text-purple-600 whitespace-nowrap flex items-center gap-1">
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                  <polyline points="20 6 9 17 4 12" />
-                </svg>
-                Ready
-              </span>
-            )}
-          </div>
-          <p className="text-xs text-gray-400">
-            {aiVendor === 'mistral' && 'Mistral key is also used for Voxtral mic transcription. '}
-            API keys are stored in your browser only.
-          </p>
+          {/* API key input — hidden for local ONNX model */}
+          {isLocal ? (
+            <p className="text-xs text-purple-600 flex items-center gap-1.5">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                <polyline points="20 6 9 17 4 12" />
+              </svg>
+              Runs entirely in your browser — no API key needed. Model downloads on first use.
+            </p>
+          ) : (
+            <>
+              <div className="flex items-center gap-2">
+                <input
+                  type="password"
+                  value={currentKey}
+                  onChange={e => handleKeyChange(e.target.value)}
+                  placeholder={VENDORS.find(v => v.id === aiVendor)?.placeholder}
+                  className="flex-1 bg-gray-50 border border-purple-300/60 rounded-lg px-3 py-1.5 text-xs text-gray-700 placeholder-gray-400 focus:outline-none focus:border-purple-400"
+                />
+                {hasKey && (
+                  <span className="text-xs text-purple-600 whitespace-nowrap flex items-center gap-1">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                      <polyline points="20 6 9 17 4 12" />
+                    </svg>
+                    Ready
+                  </span>
+                )}
+              </div>
+              <p className="text-xs text-gray-400">
+                {aiVendor === 'mistral' && 'Mistral key is also used for Voxtral mic transcription. '}
+                API keys are stored in your browser only.
+              </p>
+            </>
+          )}
         </div>
       )}
     </div>
